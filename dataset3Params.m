@@ -23,7 +23,24 @@ sigma = 0.3;
 %        mean(double(predictions ~= yval))
 %
 
+cTest = [0.01 0.03 0.1 0.3 1 3 10 30];
+sigmaTest = cTest;
 
+lowestError = inf;
+
+for c = cTest
+  for s = sigmaTest
+    model = svmTrain(X, y, c, @(x1, x2) gaussianKernel(x1, x2, s));
+    predictions = svmPredict(model, Xval);
+    error = mean(double(predictions ~= yval));
+    if (error < lowestError)
+      C = c;
+      sigma = s;
+      lowestError = error;
+      fprintf("[C, sigma] = [%f %f] with error = %f\n", C, sigma, lowestError);
+    end
+  end
+end
 
 
 
